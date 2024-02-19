@@ -1,3 +1,5 @@
+const auth = require('../auth');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
@@ -23,15 +25,23 @@ usersRoutes.post('/login', async (req, res) => {
 		const hashedSaltedPass = user.password;
 		const givenPass = req.body.password;
 
-		if (await bcrypt.compare(givenPass, hashedSaltedPass))
-			res.send('success');
+        console.log(user);
+
+		if (await bcrypt.compare(givenPass, hashedSaltedPass)) {
+            const accessToken = jwt.sign({ name: user.name }, '123');
+            res.json({ accessToken });
+        }
 		else
 			res.status(401).send('not allowed');
 	}
-	catch {
+	catch(err) {
         console.error(err);
 		res.status(500).send('server error');
 	}
+});
+
+usersRoutes.post('/whoami', auth, (req, res) => {
+    res.send(req.user.name);
 });
 
 usersRoutes.post('/', async (req, res) => {
