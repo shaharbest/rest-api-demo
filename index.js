@@ -11,6 +11,7 @@ app.get('/ping', (req, res) => {
 });
 
 app.use('/products', require('./routes/productsRoutes'));
+app.use('/users', require('./routes/usersRoutes'));
 
 app.listen(3000, () => {
     console.log('listen to port', 3000);
